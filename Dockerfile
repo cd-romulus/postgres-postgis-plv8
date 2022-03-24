@@ -1,12 +1,20 @@
-FROM postgres:12.2
-
-# build plv8
-ENV POSTGRES_SERVER_DEV_VERSION 12.2-2.pgdg100+1
+FROM postgres:12
 
 RUN apt-get update \
-	&& apt-get install -y --no-install-recommends ca-certificates wget build-essential libc++abi-dev git python libc++-dev glib2.0 libtinfo5 postgresql-server-dev-12=$POSTGRES_SERVER_DEV_VERSION \
+	&& apt-get install -y --no-install-recommends ca-certificates wget build-essential libc++abi-dev git python libc++-dev glib2.0 libtinfo5 postgresql-server-dev-12=$PG_VERSION \
 	&& git config --global user.name "Temporary User" && git config --global user.email "Temporarary.User@example.com" 
 
+#build hll
+ARG HLL_VERSION=v2.16
+RUN git clone https://github.com/citusdata/postgresql-hll.git \
+	&& cd postgresql-hll \
+	&& git checkout tags/${HLL_VERSION} \
+	&& make \
+	&& make install \
+	&& cd .. \
+	&& rm -rf postgres-hll
+
+# build plv8
 RUN	git clone https://github.com/plv8/plv8.git \
 	&& cd plv8 \
 	&& git checkout tags/v2.3.14 \ 
@@ -28,6 +36,7 @@ RUN wget https://download.osgeo.org/postgis/source/postgis-3.0.1.tar.gz \
 	&& make install \
 	&& cd .. \
 	&& rm -rf postgis-3.0.1
+
 
 # clean up	
 RUN apt-get purge -y --auto-remove ca-certificates wget build-essential git python glib2.0 postgresql-server-dev-12 libgeos++-dev libxml2-dev libjson-c-dev libcunit1 libproj-dev libgdal-dev libc++abi-dev
