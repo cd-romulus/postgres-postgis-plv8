@@ -24,22 +24,23 @@ RUN	git clone https://github.com/plv8/plv8.git \
 	&& rm -rf plv8 
 
 # build postgis
-RUN apt-get install -y --no-install-recommends tar gdal-bin libgdal-dev dans-gdal-scripts libgeos-3.7.1 libgeos++-dev proj-bin libproj-dev libxml2 libxml2-dev libjson-c3 libjson-c-dev libcunit1 \
+RUN apt-get install -y --no-install-recommends tar gdal-bin libgdal-dev libgeos-3.9.0 libgeos++-dev proj-bin libproj-dev libxml2 libxml2-dev libjson-c5 libjson-c-dev libcunit1 libprotobuf-c1  libprotobuf-c-dev protobuf-c-compiler libprotoc-dev \
 	&& rm -rf /var/lib/apt/lists/* 
-	
-RUN wget https://download.osgeo.org/postgis/source/postgis-3.0.1.tar.gz \
-	&& tar -xvzf postgis-3.0.1.tar.gz \
-	&& rm postgis-3.0.1.tar.gz \
-	&& cd postgis-3.0.1 \
+
+ARG POSTGIS_VERSION=3.2.1
+RUN wget https://download.osgeo.org/postgis/source/postgis-${POSTGIS_VERSION}.tar.gz \
+	&& tar -xvzf postgis-${POSTGIS_VERSION}.tar.gz \
+	&& rm postgis-${POSTGIS_VERSION}.tar.gz \
+	&& cd postgis-${POSTGIS_VERSION} \
 	&& ./configure \
 	&& make \
 	&& make install \
 	&& cd .. \
-	&& rm -rf postgis-3.0.1
+	&& rm -rf postgis-${POSTGIS_VERSION}
 
 
 # clean up	
-RUN apt-get purge -y --auto-remove ca-certificates wget build-essential git python glib2.0 postgresql-server-dev-12 libgeos++-dev libxml2-dev libjson-c-dev libcunit1 libproj-dev libgdal-dev libc++abi-dev
+RUN apt-get purge -y --auto-remove ca-certificates wget build-essential git python glib2.0 postgresql-server-dev-12 libgeos++-dev libxml2-dev libjson-c-dev libcunit1 libproj-dev libgdal-dev libc++abi-dev libprotobuf-c-dev libprotoc-dev
 
 RUN mkdir -p /docker-entrypoint-initdb.d
 # enable plv8 by default
