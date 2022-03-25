@@ -1,9 +1,10 @@
-# Dockerfile that builds a postgres image with postgis and plv8 extensions
+# Dockerfile that builds a postgres image with postgis, plv8, hll extensions
 
 Currently used versions are
-- postgres: 12.2
-- postgis: 3.0.1
-- plv8: 2.3.14
+- postgres: 12
+- postgis: 3.2.1
+- plv8: 3.0.0
+- hll: 2.1.6
 
 plv8 will be enabled by default on each created database. The postgis features have to be [enabled manually](https://postgis.net/install/).
 
