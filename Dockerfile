@@ -6,6 +6,7 @@ RUN apt-get update \
 
 #build hll
 ARG HLL_VERSION=v2.16
+
 RUN git clone https://github.com/citusdata/postgresql-hll.git \
 	&& cd postgresql-hll \
 	&& git checkout tags/${HLL_VERSION} \
@@ -15,9 +16,11 @@ RUN git clone https://github.com/citusdata/postgresql-hll.git \
 	&& rm -rf postgres-hll
 
 # build plv8
+ARG PLV8_VERSION=v3.0.0
+RUN apt-get install -y --no-install-recommends ninja-build
 RUN	git clone https://github.com/plv8/plv8.git \
 	&& cd plv8 \
-	&& git checkout tags/v2.3.14 \ 
+	&& git checkout tags/${PLV8_VERSION} \ 
 	&& make \
 	&& make install \
 	&& cd / \
@@ -40,7 +43,7 @@ RUN wget https://download.osgeo.org/postgis/source/postgis-${POSTGIS_VERSION}.ta
 
 
 # clean up	
-RUN apt-get purge -y --auto-remove ca-certificates wget build-essential git python glib2.0 postgresql-server-dev-12 libgeos++-dev libxml2-dev libjson-c-dev libcunit1 libproj-dev libgdal-dev libc++abi-dev libprotobuf-c-dev libprotoc-dev
+RUN apt-get purge -y --auto-remove ca-certificates wget build-essential git python glib2.0 postgresql-server-dev-12 libgeos++-dev libxml2-dev libjson-c-dev libcunit1 libproj-dev libgdal-dev libc++abi-dev libprotobuf-c-dev libprotoc-dev ninja-build
 
 RUN mkdir -p /docker-entrypoint-initdb.d
 # enable plv8 by default
